@@ -1,0 +1,3 @@
+/* @import 规则：在一个样式表中导入另一个样式表 ，必须在文档顶部*/
+@import "./reset.css";
+@import "./common.css";
