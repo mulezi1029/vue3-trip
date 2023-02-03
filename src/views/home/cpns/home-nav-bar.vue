@@ -2,7 +2,6 @@
   <div class="nav-bar">
     <div class="title">旅途</div>
   </div>
-
 </template>
 
 <script setup>
