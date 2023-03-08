@@ -2,13 +2,14 @@ import dayjs from "dayjs";
 
 /**
  * 
- * @param {Date} date 日期
+ * @param {} date 日期
+ * @param {} format_type 格式化的类型
  * @returns 格式化的日期  xx月xx日
  */
 
-export function formatMonthDay(date) {
+export function formatMonthDay(date, format_type = 'MM月DD日') {
   // dayjs()不传参数，默认会将当前日期传入
-  return dayjs(date).format('MM月DD日')
+  return dayjs(date).format(format_type)
 }
 /**
  * 

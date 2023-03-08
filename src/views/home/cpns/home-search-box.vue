@@ -8,6 +8,7 @@
         <img src="@/assets/img/home/icon_location.png" alt="">
       </div>
     </div>
+
     <!-- 日期范围 -->
     <div class="date-range section bottom-gray-line" @click="showCalendar = true">
       <div class="start">
@@ -24,45 +25,52 @@
         </div>
       </div>
     </div>
+
+    <!-- 日历 -->
     <van-calendar type="range" :show-confirm="false" :round="false" color="#ff9854" v-model:show="showCalendar"
-      @confirm="onConfirm" :formatter="formatter" />
+      @confirm="onConfirm" :formatter="formatter" :default-date="null" />
+
     <!-- 价格/人数选择 -->
     <div class="price-count bottom-gray-line">
       <div class="start">价格不限</div>
       <div class="end">人数不限</div>
     </div>
+
     <!-- 关键字 -->
     <div class="keyword bottom-gray-line">关键字/位置/民宿</div>
+
     <!-- 热门建议 -->
     <div class="hot-suggests">
       <template v-for="(item, index) in hotSuggests">
-        <div class="item" :style="{ color: item.tagText.color, background: item.tagText.background.color }">{{
-          item.tagText.text
-        }}</div>
+        <div class="item" :style="{ color: item.tagText.color, background: item.tagText.background.color }"
+          @click="enterSearch(item.tagText.text)">
+          {{
+            item.tagText.text
+          }}
+        </div>
       </template>
     </div>
+
+    <!-- 搜索按钮 -->
+    <div class="search-btn" @click="enterSearch()">
+      <div class="btn">开始搜索</div>
+    </div>
+
+
   </div>
 
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import useCityStore from '@/stores/modules/city';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 import { formatMonthDay, getTotalDays } from '@/utils/format_date'
 import useHomeStore from '@/stores/modules/home';
-
+import useMainStore from '@/stores/modules/main';
 
 const router = useRouter()
-
-// // 定义props
-// defineProps({
-//   hotSuggests: {
-//     type: Array,
-//     default: () => []
-//   }
-// })
 
 const positionClick = () => {
   navigator.geolocation.getCurrentPosition(res => {
@@ -80,22 +88,34 @@ const cityClick = () => {
 const cityStore = useCityStore()
 const { currentCity } = storeToRefs(cityStore)
 
-// 日期范围处理
-const nowDate = new Date()
-// const newDate = nowDate.setDate(nowDate.getDate()+1) //ps:此操作后，会改变 上面的 nowDate 的值，使其加一天了
-const newDate = new Date().setDate(nowDate.getDate() + 1)
-const startDay = ref(formatMonthDay(nowDate))
-const awayDay = ref(formatMonthDay(newDate))
-const stayCount = ref(getTotalDays(new Date(), newDate))
+// // 日期范围处理
+/* 使用状态库导入 */
+const mainStore = useMainStore()
+const { startDate, awayDate } = storeToRefs(mainStore)
+
+// const nowDate = new Date()
+// // const newDate = nowDate.setDate(nowDate.getDate()+1) //ps:此操作后，会改变 上面的 nowDate 的值，使其加一天了
+// const newDate = new Date().setDate(nowDate.getDate() + 1)
+const startDay = computed(() => formatMonthDay(startDate.value))
+const awayDay = computed(() => formatMonthDay(awayDate.value))
+const stayCount = computed(() => getTotalDays(startDate.value, awayDate.value))
+
+// const startDay = ref(formatMonthDay(nowDate))
+// const awayDay = ref(formatMonthDay(newDate))
+// const stayCount = ref(getTotalDays(new Date(), newDate))
 // 日历
 const showCalendar = ref(false)
 const onConfirm = (value) => {
   // 1.设置日期
   const selectStart = value[0]
   const selectEnd = value[1]
-  stayCount.value = getTotalDays(selectStart, selectEnd)
-  startDay.value = formatMonthDay(selectStart)
-  awayDay.value = formatMonthDay(selectEnd)
+  mainStore.startDate = selectStart
+  mainStore.awayDate = selectEnd
+  console.log(startDate)
+  console.log(awayDate)
+  // stayCount.value = getTotalDays(selectStart, selectEnd)
+  // startDay.value = formatMonthDay(selectStart)
+  // awayDay.value = formatMonthDay(selectEnd)
   //2.隐藏日历
   showCalendar.value = false
 }
@@ -111,6 +131,20 @@ const formatter = (day) => {
 // 热门建议:从状态管理库中获取数据
 const homeStore = useHomeStore()
 const { hotSuggests } = storeToRefs(homeStore)
+
+//搜索按钮点击进入search页面,如果想在跳转进入新页面时，传入一些参数数据，如将startDay awayDay做法如下
+const enterSearch = (data) => {
+  // router.push('/search')
+  router.push({
+    path: '/search',
+    query: {
+      startDay: startDay.value,
+      awayDay: awayDay.value,
+      currentCity: currentCity.value.cityName,
+      localstrict: data,
+    }
+  })
+}
 
 </script>
 
@@ -232,50 +266,24 @@ const { hotSuggests } = storeToRefs(homeStore)
   }
 }
 
-// .section {
-//   display: flex;
-//   height: 44px;
-//   align-items: center;
-//   padding: 0 20px;
-//   justify-content: space-between;
-//   color: #999;
+.search-btn {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 20px;
+  margin: 15px 0;
 
-//   .start {
-//     display: flex;
-//     flex: 1;
-//     justify-content: space-between;
-//     align-items: center;
-
-//     .date {
-//       display: flex;
-//       flex-direction: column;
-//       align-items: center;
-//     }
-
-//     .stay {
-//       flex: 1;
-//       text-align: center;
-//       margin-right: 20px;
-//     }
-//   }
-
-//   .end {
-//     .date {
-//       display: flex;
-//       flex-direction: column;
-//       align-items: center;
-//     }
-//   }
-
-//   .tip {
-//     font-size: 12px;
-//   }
-
-//   .time {
-//     margin-top: 3px;
-//     font-size: 15px;
-//     font-weight: 500;
-//     color: #333;
-//   }
-// }
+  .btn {
+    width: 342px;
+    height: 38px;
+    max-height: 50px;
+    line-height: 38px;
+    font-weight: 500;
+    font-size: 18px;
+    color: #fff;
+    border-radius: 20px;
+    text-align: center;
+    background-image: var(--theme-linear-gradient);
+  }
+}
 </style>

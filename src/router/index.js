@@ -10,19 +10,33 @@ const router = createRouter({
     },
     {
       path: '/home',
-      component: () => import('@/views/home/home.vue')
-    },
-    {
-      path: '/order',
-      component: () => import('@/views/order/order.vue')
+      component: () => import('@/views/home/home.vue'),
+      meta: {
+        currentIndex: 0
+      }
     },
     {
       path: '/favor',
-      component: () => import('@/views/favor/favor.vue')
+      component: () => import('@/views/favor/favor.vue'),
+      meta: {
+        currentIndex: 1
+      }
     },
     {
+      path: '/order',
+      component: () => import('@/views/order/order.vue'),
+      meta: {
+        currentIndex: 2
+      }
+    },
+
+    {
       path: '/message',
-      component: () => import('@/views/message/message.vue')
+      component: () => import('@/views/message/message.vue'),
+      meta: {
+        currentIndex: 3,
+        hideTabBar: true
+      }
     },
     {
       path: '/city',
@@ -30,6 +44,20 @@ const router = createRouter({
       // meta: {
       //   hideTabBar:true
       // }
+    },
+    {
+      path: '/search',
+      component: () => import('@/views/search/search.vue'),
+      meta: {
+        hideTabBar: true
+      }
+    },
+    {
+      path: '/detail/:id',
+      component: () => import('@/views/detail/detail.vue'),
+      meta: {
+        hideTabBar: true
+      }
     }
   ]
 })

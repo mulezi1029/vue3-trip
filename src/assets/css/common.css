@@ -1,6 +1,9 @@
 :root {
   --primary-color: #ff9854;
   --line-color: #faf8f9;
+  --van-primary-color: #ff9854;
+  --theme-linear-gradient: linear-gradient(90deg, #fa8c1d, #fcaf3f);
+  --tip-linear-gradient: linear-gradient(270deg, #f66, #ff9f9f);
   /* 全局修改：任何地方只要用到，都会改 */
   --van-search-left-icon-color: var(--primary-color) !important
 }
