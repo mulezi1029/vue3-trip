@@ -1,47 +1,39 @@
 <template>
   <div class="home" ref="homeRef">
     <homeNavBar />
-    <div class="banner">
-      <img src="@/assets/img/home/banner.webp" alt="">
-    </div>
-
+    <homeBanner></homeBanner>
     <!-- <homeSearchBox :hot-suggests="hotSuggests"></homeSearchBox> -->
-
     <homeSearchBox />
     <homeCategories />
     <searchBar v-if="isShowSearchBar" />
     <homeContent />
-
     <!-- 测试获取数据按钮 -->
     <!-- <button @click="moreBtnClick">加载更多</button> -->
-
-
   </div>
-
 </template>
 
 <script>
-export default { namm: "home" }
+export default { namm: "home" };
 </script>
 <script setup>
-import { onUnmounted, onMounted, watch, ref, computed, onActivated } from "vue"
-import homeNavBar from './cpns/home-nav-bar.vue'
-import homeSearchBox from './cpns/home-search-box.vue'
-import homeCategories from './cpns/home-categories.vue'
-import homeContent from './cpns/home-content.vue'
-import searchBar from "@/components/search-bar/search-bar.vue"
-import useHomeStore from '@/stores/modules/home'
-import useScroll from "@/hooks/useScroll"
-import useMainStore from "@/stores/modules/main"
-import { storeToRefs } from "pinia"
+import { onUnmounted, onMounted, watch, ref, computed, onActivated } from "vue";
+import homeNavBar from "./cpns/home-nav-bar.vue";
+import homeBanner from "./cpns/home-banner.vue";
+import homeSearchBox from "./cpns/home-search-box.vue";
+import homeCategories from "./cpns/home-categories.vue";
+import homeContent from "./cpns/home-content.vue";
+import searchBar from "@/components/search-bar/search-bar.vue";
+import useHomeStore from "@/stores/modules/home";
+import useScroll from "@/hooks/useScroll";
+import useMainStore from "@/stores/modules/main";
+import { storeToRefs } from "pinia";
 
-
-const homeStore = useHomeStore()
+const homeStore = useHomeStore();
 // 发送网络请求，在状态管理库中进行网络请求获取到的数据存在库中
-homeStore.fetchHotSuggest()
-homeStore.fetchCategories()
+homeStore.fetchHotSuggest();
+homeStore.fetchCategories();
 // let currentPage = 1
-homeStore.fetchHouseList()
+homeStore.fetchHouseList();
 //1.热门建议
 // const hotSuggests = ref([])
 // request.get({ url: 'home/hotSuggests' }).then(({ data: res }) => {
@@ -87,8 +79,8 @@ homeStore.fetchHouseList()
 //   homeStore.fetchHouseList()
 // })
 /* 法二：通过变量 */
-const homeRef = ref()
-const { isReachBtm, scrollTop } = useScroll(homeRef)
+const homeRef = ref();
+const { isReachBtm, scrollTop } = useScroll(homeRef);
 // // 控制动画显示
 // const { isLoading } = storeToRefs(useMainStore())
 watch(isReachBtm, (newValue) => {
@@ -96,10 +88,10 @@ watch(isReachBtm, (newValue) => {
     // isLoading.value = true
     homeStore.fetchHouseList().then(() => {
       // isLoading.value = false
-      isReachBtm.value = false
-    })
+      isReachBtm.value = false;
+    });
   }
-})
+});
 
 /* 搜索框显示的控制 */
 //// 法一：
@@ -110,16 +102,15 @@ watch(isReachBtm, (newValue) => {
 // })
 ////法二：
 const isShowSearchBar = computed(() => {
-  return scrollTop.value > 500
-})
-
+  return scrollTop.value > 500;
+});
 
 // 跳转回home时，保留原来位置
 onActivated(() => {
   homeRef.value?.scrollTo({
-    top: scrollTop.value
-  })
-})
+    top: scrollTop.value,
+  });
+});
 </script>
 
 <style lang="less" scoped>
@@ -132,11 +123,5 @@ onActivated(() => {
   // &::-webkit-scrollbar {
   //   display: none;
   // }
-}
-
-.banner {
-  img {
-    width: 100%;
-  }
 }
 </style>
