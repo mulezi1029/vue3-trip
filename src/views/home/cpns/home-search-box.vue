@@ -5,12 +5,15 @@
       <div class="city" @click="cityClick">{{ currentCity.cityName }}</div>
       <div class="current" @click="positionClick">
         <div class="text">我的位置</div>
-        <img src="@/assets/img/home/icon_location.png" alt="">
+        <img src="@/assets/img/home/icon_location.png" alt="" />
       </div>
     </div>
 
     <!-- 日期范围 -->
-    <div class="date-range section bottom-gray-line" @click="showCalendar = true">
+    <div
+      class="date-range section bottom-gray-line"
+      @click="showCalendar = true"
+    >
       <div class="start">
         <div class="date">
           <span class="tip">入住</span>
@@ -27,8 +30,16 @@
     </div>
 
     <!-- 日历 -->
-    <van-calendar type="range" :show-confirm="false" :round="false" color="#ff9854" v-model:show="showCalendar"
-      @confirm="onConfirm" :formatter="formatter" :default-date="null" />
+    <van-calendar
+      type="range"
+      :show-confirm="false"
+      :round="false"
+      color="#ff9854"
+      v-model:show="showCalendar"
+      @confirm="onConfirm"
+      :formatter="formatter"
+      :default-date="null"
+    />
 
     <!-- 价格/人数选择 -->
     <div class="price-count bottom-gray-line">
@@ -42,11 +53,15 @@
     <!-- 热门建议 -->
     <div class="hot-suggests">
       <template v-for="(item, index) in hotSuggests">
-        <div class="item" :style="{ color: item.tagText.color, background: item.tagText.background.color }"
-          @click="enterSearch(item.tagText.text)">
-          {{
-            item.tagText.text
-          }}
+        <div
+          class="item"
+          :style="{
+            color: item.tagText.color,
+            background: item.tagText.background.color,
+          }"
+          @click="enterSearch(item.tagText.text)"
+        >
+          {{ item.tagText.text }}
         </div>
       </template>
     </div>
@@ -55,97 +70,92 @@
     <div class="search-btn" @click="enterSearch()">
       <div class="btn">开始搜索</div>
     </div>
-
-
   </div>
-
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
-import useCityStore from '@/stores/modules/city';
-import { storeToRefs } from 'pinia';
-import { useRouter } from 'vue-router';
-import { formatMonthDay, getTotalDays } from '@/utils/format_date'
-import useHomeStore from '@/stores/modules/home';
-import useMainStore from '@/stores/modules/main';
+import { computed, ref } from "vue";
+import useCityStore from "@/stores/modules/city";
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+import { formatMonthDay, getTotalDays } from "@/utils/format_date";
+import useHomeStore from "@/stores/modules/home";
+import useMainStore from "@/stores/modules/main";
 
-const router = useRouter()
+const router = useRouter();
 
+// 点击获取位置
 const positionClick = () => {
-  navigator.geolocation.getCurrentPosition(res => {
-    console.log('位置获取成功', res)
-  }, err => {
-    console.log('位置获取失败', err)
-  })
-}
-// 进入城市页面路由
+  navigator.geolocation.getCurrentPosition(
+    (res) => {
+      console.log("位置获取成功", res);
+    },
+    (err) => {
+      console.log("位置获取失败", err);
+    }
+  );
+};
+// 点击进入城市页面路由
 const cityClick = () => {
-  router.push('/city')
-}
+  router.push("/city");
+};
 
-// 当前城市
-const cityStore = useCityStore()
-const { currentCity } = storeToRefs(cityStore)
+// 获取城市页面中选中的当前城市，当前城市存入store中
+const cityStore = useCityStore();
+const { currentCity } = storeToRefs(cityStore);
 
 // // 日期范围处理
 /* 使用状态库导入 */
-const mainStore = useMainStore()
-const { startDate, awayDate } = storeToRefs(mainStore)
+const mainStore = useMainStore();
+const { startDate, awayDate } = storeToRefs(mainStore);
 
 // const nowDate = new Date()
 // // const newDate = nowDate.setDate(nowDate.getDate()+1) //ps:此操作后，会改变 上面的 nowDate 的值，使其加一天了
 // const newDate = new Date().setDate(nowDate.getDate() + 1)
-const startDay = computed(() => formatMonthDay(startDate.value))
-const awayDay = computed(() => formatMonthDay(awayDate.value))
-const stayCount = computed(() => getTotalDays(startDate.value, awayDate.value))
+const startDay = computed(() => formatMonthDay(startDate.value));
+const awayDay = computed(() => formatMonthDay(awayDate.value));
+const stayCount = computed(() => getTotalDays(startDate.value, awayDate.value));
 
-// const startDay = ref(formatMonthDay(nowDate))
-// const awayDay = ref(formatMonthDay(newDate))
-// const stayCount = ref(getTotalDays(new Date(), newDate))
-// 日历
-const showCalendar = ref(false)
+/* 错误写法： const startDay = ref(formatMonthDay(nowDate))
+const awayDay = ref(formatMonthDay(newDate))
+const stayCount = ref(getTotalDays(new Date(), newDate)) */
+// 日历模块
+const showCalendar = ref(false); //控制日历是否显示，只有在点击日期选择部分后，想显示出日历
 const onConfirm = (value) => {
   // 1.设置日期
-  const selectStart = value[0]
-  const selectEnd = value[1]
-  mainStore.startDate = selectStart
-  mainStore.awayDate = selectEnd
-  console.log(startDate)
-  console.log(awayDate)
-  // stayCount.value = getTotalDays(selectStart, selectEnd)
-  // startDay.value = formatMonthDay(selectStart)
-  // awayDay.value = formatMonthDay(selectEnd)
+  const selectStart = value[0];
+  const selectEnd = value[1];
+  mainStore.startDate = selectStart;
+  mainStore.awayDate = selectEnd;
   //2.隐藏日历
-  showCalendar.value = false
-}
-// 修改日期文案  ：入住 离店
+  showCalendar.value = false; //日期选择完后，隐藏日历
+};
+// 修改日历中的日期文案  ：入住 离店  vant提供函数api
 const formatter = (day) => {
-  if (day.type === 'start') {
-    day.bottomInfo = '入住';
-  } else if (day.type === 'end') {
-    day.bottomInfo = '离店';
+  if (day.type === "start") {
+    day.bottomInfo = "入住";
+  } else if (day.type === "end") {
+    day.bottomInfo = "离店";
   }
-  return day
-}
+  return day;
+};
 // 热门建议:从状态管理库中获取数据
-const homeStore = useHomeStore()
-const { hotSuggests } = storeToRefs(homeStore)
+const homeStore = useHomeStore();
+const { hotSuggests } = storeToRefs(homeStore);
 
 //搜索按钮点击进入search页面,如果想在跳转进入新页面时，传入一些参数数据，如将startDay awayDay做法如下
 const enterSearch = (data) => {
   // router.push('/search')
   router.push({
-    path: '/search',
+    path: "/search",
     query: {
       startDay: startDay.value,
       awayDay: awayDay.value,
       currentCity: currentCity.value.cityName,
       localstrict: data,
-    }
-  })
-}
-
+    },
+  });
+};
 </script>
 
 <style lang="less" scoped>
@@ -189,7 +199,6 @@ const enterSearch = (data) => {
   padding: 0 20px;
   height: 44px;
   color: #999;
-
 
   .start {
     flex: 1;

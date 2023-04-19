@@ -43,7 +43,7 @@ export default function useScroll(elRef) {
     if (el === window) {
       // 当前页面可视高度
       clientHeight.value = document.documentElement.clientHeight
-      // 以滚动高度
+      // 已滚动高度
       scrollTop.value = document.documentElement.scrollTop
       // 所有可滚动高度
       scrollHeight.value = document.documentElement.scrollHeight
@@ -52,18 +52,20 @@ export default function useScroll(elRef) {
       scrollTop.value = el.scrollTop
       scrollHeight.value = el.scrollHeight
     }
-
     if (scrollTop.value + clientHeight.value + 1 >= scrollHeight.value) {
       console.log('滚动底部了')
       isReachBtm.value = true
     }
   }, 100)
+
   onMounted(() => {
     if (elRef) el = elRef.value
     el.addEventListener('scroll', scrollListenHandler)
   })
+
   onUnmounted(() => {
     el.removeEventListener('scroll', scrollListenHandler)
   })
+  
   return { isReachBtm, scrollTop, clientHeight, scrollHeight }
 }

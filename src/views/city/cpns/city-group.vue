@@ -2,14 +2,17 @@
   <div class="city-group">
     <van-index-bar highlight-color="#ff9854" :index-list="indexList">
       <van-index-anchor index="#">热门</van-index-anchor>
+      <!-- 热门城市列表 -->
       <div class="hotCitylist">
         <template v-for="(city) in groupData?.hotCities">
           <div class="hotCity" @click="cityClick(city)">{{ city.cityName }}</div>
         </template>
       </div>
-
+<!-- 全部城市数据 -->
       <template v-for="(group, index) in groupData?.cities" :key="index">
+        <!-- 分组 -->
         <van-index-anchor :index="group.group" />
+        <!-- 对应分组的数据 -->
         <template v-for="(city, indey) in group.cities" :key="indey">
           <van-cell :title="city.cityName" @click="cityClick(city)" />
         </template>
@@ -42,7 +45,7 @@ const props = defineProps({
     default: () => { }
   }
 })
-
+// 索引栏：不是默认就A-Z，而是根据城市列表数据中的分类并添加#索引
 const indexList = computed(() => {
   const list = props.groupData.cities.map(item => item.group)
   list.unshift("#")
@@ -54,7 +57,7 @@ const router = useRouter()
 const cityStore = useCityStore()
 const cityClick = (city) => {
   // console.log(city)
-  // 选中当前城市
+  // 在状态管理库中，保存当前选中的城市
   cityStore.currentCity = city
   // 返回上一级
   router.back()

@@ -8,9 +8,6 @@
       <van-tabs v-model:active="tabActive" color="#ff9854" line-height="2">
         <template v-for="(value, key, index) in allCities">
           <van-tab :title="value.title" :name="key">
-            <!-- <div class="content">
-              <cityGroup :group-data="value"></cityGroup>
-            </div> -->
           </van-tab>
         </template>
       </van-tabs>
